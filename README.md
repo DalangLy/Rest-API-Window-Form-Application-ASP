@@ -2,3 +2,4 @@
 
 # Nuget Installation
 - newtonjson
+- Microsoft.AspNet.SignalR
