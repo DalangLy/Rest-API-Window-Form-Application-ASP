@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNet.SignalR.Client;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,6 +16,29 @@ namespace WindowFormRestClient
 {
     public partial class Form1 : Form
     {
+
+        public IHubProxy HubProxy { get; set; }
+        public const string ServerUrl = "http://localhost:16163/";
+        public HubConnection Connection { get; set; }
+
+        public async void Connect()
+        {
+            Connection = new HubConnection(ServerUrl);
+            HubProxy = Connection.CreateHubProxy("MyHub1");
+            await Connection.Start();
+            HubProxy.On("BroadcastMessage", (message) =>
+                this.Invoke((Action)(() =>
+                    //textBox1.AppendText(String.Format("{0}" + Environment.NewLine, message))
+                    Console.WriteLine(String.Format("{0}" + Environment.NewLine, message))
+                ))
+            );
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Connect();
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -143,6 +167,8 @@ namespace WindowFormRestClient
                 MessageBox.Show("Select Row First " + ex);
             }
         }
+
+        
     }
 
     class TestModel    {
